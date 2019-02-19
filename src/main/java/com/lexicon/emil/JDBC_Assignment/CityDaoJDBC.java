@@ -11,21 +11,18 @@ import java.util.List;
 
 public class CityDaoJDBC implements CityDao {
 
-	private Connection connection;
-
-	
-	public CityDaoJDBC() throws SQLException {
-		 connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/world?autoReconnect=true&useSSL=false&serverTimezone=UTC", "root", "password");
-	}
-	
 	@Override
 	public City findCity(int id) {
 
 		City city = new City();
+		PreparedStatement idQuery = null;
+		ResultSet resultSet = null;
+		Connection connection = null;
 		try {
-			PreparedStatement idQuery = connection.prepareStatement("SELECT * FROM city WHERE ID LIKE ?");
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/world?autoReconnect=true&useSSL=false&serverTimezone=UTC", "root", "password");
+			idQuery = connection.prepareStatement("SELECT * FROM city WHERE ID LIKE ?");
 			idQuery.setInt(1, id);
-			ResultSet resultSet = idQuery.executeQuery();
+			resultSet = idQuery.executeQuery();
 			
 			resultSet.next();
 			city.setId(resultSet.getInt("ID"));
@@ -35,6 +32,10 @@ public class CityDaoJDBC implements CityDao {
 			city.setPopulation(resultSet.getInt("Population"));
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			try { if(idQuery != null) idQuery.close(); } catch (SQLException e) { }
+			try { if(resultSet != null) resultSet.close(); } catch (SQLException e) { }
+			try { if(connection != null) connection.close(); } catch (SQLException e) { }
 		}
 		
 		return city;
@@ -43,10 +44,14 @@ public class CityDaoJDBC implements CityDao {
 	@Override
 	public List<City> findByCode(String code) {
 		List<City> citys = new ArrayList<City>();
+		PreparedStatement codeQuery = null;
+		ResultSet resultSet = null;
+		Connection connection = null;
 		try {
-			PreparedStatement codeQuery = connection.prepareStatement("SELECT * FROM city WHERE CountryCode LIKE ?");
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/world?autoReconnect=true&useSSL=false&serverTimezone=UTC", "root", "password");
+			codeQuery = connection.prepareStatement("SELECT * FROM city WHERE CountryCode LIKE ?");
 			codeQuery.setString(1, code);
-			ResultSet resultSet = codeQuery.executeQuery();
+			resultSet = codeQuery.executeQuery();
 
 			while(resultSet.next()) {
 				City city = new City();
@@ -59,6 +64,10 @@ public class CityDaoJDBC implements CityDao {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			try { if(codeQuery != null) codeQuery.close(); } catch (SQLException e) { }
+			try { if(resultSet != null) resultSet.close(); } catch (SQLException e) { }
+			try { if(connection != null) connection.close(); } catch (SQLException e) { }
 		}
 		return citys;
 	}
@@ -66,10 +75,14 @@ public class CityDaoJDBC implements CityDao {
 	@Override
 	public List<City> findByName(String name) {
 		List<City> citys = new ArrayList<City>();
+		PreparedStatement nameQuery = null;
+		ResultSet resultSet = null;
+		Connection connection = null;
 		try {
-			PreparedStatement nameQuery = connection.prepareStatement("SELECT * FROM city WHERE Name LIKE ?");
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/world?autoReconnect=true&useSSL=false&serverTimezone=UTC", "root", "password");
+			nameQuery = connection.prepareStatement("SELECT * FROM city WHERE Name LIKE ?");
 			nameQuery.setString(1, name);
-			ResultSet resultSet = nameQuery.executeQuery();
+			resultSet = nameQuery.executeQuery();
 
 			while(resultSet.next()) {
 				City city = new City();
@@ -82,6 +95,10 @@ public class CityDaoJDBC implements CityDao {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			try { if(nameQuery != null) nameQuery.close(); } catch (SQLException e) { }
+			try { if(resultSet != null) resultSet.close(); } catch (SQLException e) { }
+			try { if(connection != null) connection.close(); } catch (SQLException e) { }
 		}
 		return citys;
 	}
@@ -89,9 +106,13 @@ public class CityDaoJDBC implements CityDao {
 	@Override
 	public List<City> getAll() {
 		List<City> citys = new ArrayList<City>();
+		Statement statement = null;
+		ResultSet resultSet = null;
+		Connection connection = null;
 		try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("SELECT * FROM city");
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/world?autoReconnect=true&useSSL=false&serverTimezone=UTC", "root", "password");
+			statement = connection.createStatement();
+			resultSet = statement.executeQuery("SELECT * FROM city");
 
 			while(resultSet.next()) {
 				City city = new City();
@@ -104,30 +125,42 @@ public class CityDaoJDBC implements CityDao {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			try { if(statement != null) statement.close(); } catch (SQLException e) { }
+			try { if(resultSet != null) resultSet.close(); } catch (SQLException e) { }
+			try { if(connection != null) connection.close(); } catch (SQLException e) { }
 		}
 		return citys;
 	}
 
 	@Override
 	public City add(City city) {
+		PreparedStatement addQuery = null;
+		Connection connection = null;
 		try {
-			PreparedStatement addQuery = connection.prepareStatement("INSERT INTO city (Name, CountryCode, District, Population) VALUES(?, ?, ?, ?)");
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/world?autoReconnect=true&useSSL=false&serverTimezone=UTC", "root", "password");
+			addQuery = connection.prepareStatement("INSERT INTO city (Name, CountryCode, District, Population) VALUES(?, ?, ?, ?)");
 			addQuery.setString(1, city.getName());
 			addQuery.setString(2, city.getCountryCode());
 			addQuery.setString(3, city.getDistrict());
 			addQuery.setInt(4, city.getPopulation());
 			addQuery.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			try { if(addQuery != null) addQuery.close(); } catch (SQLException e) { }
+			try { if(connection != null) connection.close(); } catch (SQLException e) { }
 		}
 		return city;
 	}
 
 	@Override
 	public City update(City city) {
+		PreparedStatement updateQuery = null;
+		Connection connection = null;
 		try {
-			PreparedStatement updateQuery = connection.prepareStatement("UPDATE city SET Name = ?, CountryCode = ?, District = ?, Population = ? WHERE ID = ?");
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/world?autoReconnect=true&useSSL=false&serverTimezone=UTC", "root", "password");
+			updateQuery = connection.prepareStatement("UPDATE city SET Name = ?, CountryCode = ?, District = ?, Population = ? WHERE ID = ?");
 			updateQuery.setString(1, city.getName());
 			updateQuery.setString(2, city.getCountryCode());
 			updateQuery.setString(3, city.getDistrict());
@@ -135,8 +168,10 @@ public class CityDaoJDBC implements CityDao {
 			updateQuery.setInt(5, city.getId());
 			updateQuery.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			try { if(updateQuery != null) updateQuery.close(); } catch (SQLException e) { }
+			try { if(connection != null) connection.close(); } catch (SQLException e) { }
 		}
 		return city;
 	}
@@ -144,14 +179,18 @@ public class CityDaoJDBC implements CityDao {
 	@Override
 	public int delete(City city) {
 		int rowsAffected = 0;
+		PreparedStatement deleteQuery = null;
+		Connection connection = null;
 		try {
-			PreparedStatement deleteQuery = connection.prepareStatement("DELETE FROM city WHERE ID = ?");
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/world?autoReconnect=true&useSSL=false&serverTimezone=UTC", "root", "password");
+			deleteQuery = connection.prepareStatement("DELETE FROM city WHERE ID = ?");
 			deleteQuery.setInt(1, city.getId());
 			rowsAffected = deleteQuery.executeUpdate();
-			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			try { if(deleteQuery != null) deleteQuery.close(); } catch (SQLException e) { }
+			try { if(connection != null) connection.close(); } catch (SQLException e) { }
 		}
 		return rowsAffected;
 	}

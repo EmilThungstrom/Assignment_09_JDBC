@@ -1,15 +1,8 @@
 package com.lexicon.emil.JDBC_Assignment;
 
-import java.sql.SQLException;
-import java.util.List;
-
-/**
- * Hello world!
- *
- */
 public class App 
 {
-    public static void main( String[] args ) throws SQLException
+    public static void main( String[] args )
     {
         CityDao cityDao = new CityDaoJDBC();
         System.out.println("Find by ID:");
