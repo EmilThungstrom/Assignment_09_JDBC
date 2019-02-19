@@ -12,7 +12,7 @@ public class CityDaoJDBCTest {
 	
 	@BeforeClass
 	static public void setUp() throws Exception {
-		cityDao = new CityDaoJDBC();
+		cityDao = new CityDaoJDBC("root", "password");
 		cityDao.add(city);
 		Assert.assertEquals(city, cityDao.findByName(city.getName()).get(0));
 		Assert.assertEquals(1, cityDao.findByName(city.getName()).size());

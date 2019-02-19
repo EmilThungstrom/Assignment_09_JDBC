@@ -4,7 +4,7 @@ public class App
 {
     public static void main( String[] args )
     {
-        CityDao cityDao = new CityDaoJDBC();
+        CityDao cityDao = new CityDaoJDBC("root", "password");
         System.out.println("Find by ID:");
         System.out.println(cityDao.findCity(1));
         System.out.println();
