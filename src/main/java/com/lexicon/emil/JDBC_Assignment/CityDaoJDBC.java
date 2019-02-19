@@ -1,5 +1,6 @@
 package com.lexicon.emil.JDBC_Assignment;
 
+import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,15 +9,27 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class CityDaoJDBC implements CityDao {
 
-	private String userName;
-	private String password;
+	private final String URL;
+	private final String USERNAME;
+	private final String PASSWORD;
 	
-	public CityDaoJDBC(String userName, String password) {
-		this.userName = userName;
-		this.password = password;
+	public CityDaoJDBC() {
+		Properties properties = new Properties();
+		
+		try(FileInputStream stream = new FileInputStream("db.properties")) 
+		{
+			properties.load(stream);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		URL= properties.getProperty("URL");
+		USERNAME = properties.getProperty("USERNAME");
+		PASSWORD = properties.getProperty("PASSWORD");
 	}
 
 	@Override
@@ -27,7 +40,7 @@ public class CityDaoJDBC implements CityDao {
 		ResultSet resultSet = null;
 		Connection connection = null;
 		try {
-			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/world?autoReconnect=true&useSSL=false&serverTimezone=UTC", userName, password);
+			connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
 			preStatement = connection.prepareStatement("SELECT * FROM city WHERE ID LIKE ?");
 			preStatement.setInt(1, id);
 			resultSet = preStatement.executeQuery();
@@ -56,7 +69,7 @@ public class CityDaoJDBC implements CityDao {
 		ResultSet resultSet = null;
 		Connection connection = null;
 		try {
-			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/world?autoReconnect=true&useSSL=false&serverTimezone=UTC", userName, password);
+			connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
 			preStatement = connection.prepareStatement("SELECT * FROM city WHERE CountryCode LIKE ?");
 			preStatement.setString(1, code);
 			resultSet = preStatement.executeQuery();
@@ -87,7 +100,7 @@ public class CityDaoJDBC implements CityDao {
 		ResultSet resultSet = null;
 		Connection connection = null;
 		try {
-			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/world?autoReconnect=true&useSSL=false&serverTimezone=UTC", userName, password);
+			connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
 			preStatement = connection.prepareStatement("SELECT * FROM city WHERE Name LIKE ?");
 			preStatement.setString(1, name);
 			resultSet = preStatement.executeQuery();
@@ -118,7 +131,7 @@ public class CityDaoJDBC implements CityDao {
 		ResultSet resultSet = null;
 		Connection connection = null;
 		try {
-			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/world?autoReconnect=true&useSSL=false&serverTimezone=UTC", userName, password);
+			connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
 			statement = connection.createStatement();
 			resultSet = statement.executeQuery("SELECT * FROM city");
 
@@ -146,7 +159,7 @@ public class CityDaoJDBC implements CityDao {
 		PreparedStatement preStatement = null;
 		Connection connection = null;
 		try {
-			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/world?autoReconnect=true&useSSL=false&serverTimezone=UTC", userName, password);
+			connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
 			preStatement = connection.prepareStatement("INSERT INTO city (Name, CountryCode, District, Population) VALUES(?, ?, ?, ?)");
 			preStatement.setString(1, city.getName());
 			preStatement.setString(2, city.getCountryCode());
@@ -167,7 +180,7 @@ public class CityDaoJDBC implements CityDao {
 		PreparedStatement preStatement = null;
 		Connection connection = null;
 		try {
-			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/world?autoReconnect=true&useSSL=false&serverTimezone=UTC", userName, password);
+			connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
 			preStatement = connection.prepareStatement("UPDATE city SET Name = ?, CountryCode = ?, District = ?, Population = ? WHERE ID = ?");
 			preStatement.setString(1, city.getName());
 			preStatement.setString(2, city.getCountryCode());
@@ -190,7 +203,7 @@ public class CityDaoJDBC implements CityDao {
 		PreparedStatement preStatement = null;
 		Connection connection = null;
 		try {
-			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/world?autoReconnect=true&useSSL=false&serverTimezone=UTC", userName, password);
+			connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
 			preStatement = connection.prepareStatement("DELETE FROM city WHERE ID = ?");
 			preStatement.setInt(1, city.getId());
 			rowsAffected = preStatement.executeUpdate();
